@@ -1,0 +1,38 @@
+<section class="panel ctrl" id="secCtrl">
+      <div class="clockrow">
+        <div><div class="eyebrow" style="color:var(--muted)">Giờ mô phỏng</div><div class="clock simclock">06:30</div></div>
+        <div class="btns"><button class="b pri" id="play">Tạm dừng</button><button class="b" id="reset">Chạy lại</button></div>
+      </div>
+      <button class="b" id="ff">Chạy nhanh tới 22:00</button>
+      <div class="field"><label for="speed">Tốc độ mô phỏng</label>
+        <select id="speed"><option value="15">15× (1 giây = 15 giây)</option><option value="30" selected>30× (1 giây = 30 giây)</option><option value="60">60× (1 giây = 1 phút)</option><option value="120">120× (1 giây = 2 phút)</option></select></div>
+      <div class="field"><label for="demand">Nhu cầu đỗ xe <output id="demandO">100%</output></label><input type="range" id="demand" min="50" max="170" value="100" step="5"></div>
+      <div class="field"><label for="evs">Tỷ lệ xe điện <output id="evsO">20%</output></label><input type="range" id="evs" min="0" max="60" value="20" step="5"></div>
+      <div class="field"><label>Ngày mô phỏng</label><div class="seg day" role="group" aria-label="Ngày mô phỏng"><button type="button" id="dEven" aria-pressed="true">Thứ Sáu 06/11 · chẵn</button><button type="button" id="dOdd" aria-pressed="false">Thứ Bảy 07/11 · lẻ</button></div></div>
+      <div class="sep"></div>
+      <label class="tog"><input type="checkbox" id="guide" checked><span>Điều hướng chỗ trống<small>Giữ ô theo bản sao số, tính quãng đi bộ, giá, quãng chạy, trụ sạc, giờ cấm sắp tới</small></span></label>
+      <div class="field"><label for="adopt">Tài xế dùng ứng dụng <output id="adoptO">50%</output></label><input type="range" id="adopt" min="0" max="100" value="50" step="5"></div>
+      <label class="tog"><input type="checkbox" id="dyn"><span>Giá động theo đoạn phố<small>Mỗi 15 phút: chiếm dụng &gt; 90% tăng 5k/h, &lt; 60% giảm 5k/h (10–60k)</small></span></label>
+      <label class="tog"><input type="checkbox" id="enf" checked><span>Cưỡng chế tự động<small>Cẩu kéo xe đỗ sai, lập biên bản quá giờ, tính phí chiếm trụ sạc</small></span></label>
+      <div class="sep"></div>
+      <div class="btns"><button class="b" id="fault">Lỗi 8 cảm biến</button><button class="b" id="cfault">Lỗi 3 trụ sạc</button><button class="b" id="spike">Sự kiện ở TTTM</button></div>
+    </section>
+<!--PLANS-->
+<section class="panel">
+    <div class="plans">
+      <div>
+        <div class="ph"><h2>Phương án tổ chức toàn khu</h2><small>Chọn rồi chỉnh tiếp từng đoạn phố</small></div>
+        <div class="presets" id="presets"></div>
+        <label class="tog" style="margin-top:12px"><input type="checkbox" id="autoRestart" checked><span>Chạy lại từ 06:30 khi đổi phương án<small>Tắt để áp dụng ngay giữa ngày và quan sát phản ứng</small></span></label>
+        <div class="curplan" id="curplan"></div>
+      </div>
+      <div>
+        <div class="ph"><h2>So sánh kết quả các phương án</h2><div class="btns"><button class="b pri" id="snap">Ghi kết quả hiện tại</button><button class="b" id="clearSnap">Xóa bảng</button></div></div>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Phương án</th><th>Giờ</th><th>Chiếm dụng TB</th><th>Lượt đỗ</th><th>Bỏ cuộc</th><th>Chạy tìm chỗ</th><th>Tìm chỗ TB</th><th>Đi bộ TB</th><th>Thu phí</th><th>Điện sạc</th><th>EV thiếu trụ</th><th>Vi phạm</th></tr></thead>
+          <tbody id="cmpBody"></tbody>
+        </table></div>
+        <p class="hint">Cách so sánh: chọn phương án, bấm "Chạy nhanh tới 22:00", rồi bấm "Ghi kết quả hiện tại". Lặp lại với phương án khác. Giá trị tốt nhất của mỗi cột được tô màu. Kết quả có yếu tố ngẫu nhiên, nên chạy mỗi phương án hai, ba lần.</p>
+      </div>
+    </div>
+  </section>

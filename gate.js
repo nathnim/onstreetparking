@@ -1,1 +1,38 @@
-(()=>{const t=window.__DTP,e=t=>document.getElementById(t),n="dt-parking-k",a=t=>Uint8Array.from(atob(t),t=>t.charCodeAt(0)),o=e("login"),i=e("loginPw"),c=e("loginErr"),r=e("loginBtn");let s=0,d=0,l=!1;const h=!!(t&&window.crypto&&crypto.subtle);async function y(n){const o=await crypto.subtle.decrypt({name:"AES-GCM",iv:a(t.i)},n,a(t.d)),i=JSON.parse((new TextDecoder).decode(o));e("secCtrl").outerHTML=i.ctrl,e("plansSlot").outerHTML=i.plans;for(const t of i.js){const e=document.createElement("script");e.textContent=t,document.body.appendChild(e)}l=!0,e("adminState").hidden=!1,e("adminBtn").textContent="Đăng xuất"}function u(){l||(o.hidden=!1,i.value="",c.textContent=h?"":t?"Trình duyệt chặn chức năng giải mã. Hãy mở trang qua địa chỉ https.":"Không tải được gói điều khiển đã mã hóa (payload.js).",r.disabled=!h,setTimeout(()=>i.focus(),0))}function m(){o.hidden=!0,e("adminBtn").focus()}e("adminBtn").onclick=()=>{if(l){try{sessionStorage.removeItem(n)}catch(t){}location.reload()}else u()},document.addEventListener("click",t=>{t.target.closest("[data-login]")&&u()}),e("loginCancel").onclick=m,o.addEventListener("click",t=>{t.target===o&&m()}),document.addEventListener("keydown",t=>{"Escape"!==t.key||o.hidden||m()}),e("loginShow").onchange=t=>{i.type=t.target.checked?"text":"password"},e("loginF").addEventListener("submit",async e=>{if(e.preventDefault(),h)if(Date.now()<d)c.textContent=`Nhập sai quá nhiều lần. Thử lại sau ${Math.ceil((d-Date.now())/1e3)} giây.`;else{r.disabled=!0,r.textContent="Đang kiểm tra…",c.textContent="";try{const e=await async function(e){const n=await crypto.subtle.importKey("raw",(new TextEncoder).encode(e),"PBKDF2",!1,["deriveKey"]);return crypto.subtle.deriveKey({name:"PBKDF2",salt:a(t.s),iterations:t.it,hash:"SHA-256"},n,{name:"AES-GCM",length:256},!0,["decrypt"])}(i.value);await y(e);try{sessionStorage.setItem(n,(o=await crypto.subtle.exportKey("raw",e),btoa(String.fromCharCode(...new Uint8Array(o)))))}catch(t){}m()}catch(t){s++,i.select(),s>=5?(s=0,d=Date.now()+3e4,c.textContent="Sai mật khẩu 5 lần. Tạm khóa 30 giây."):c.textContent=`Mật khẩu không đúng. Còn ${5-s} lần thử trước khi bị khóa tạm.`}var o;r.disabled=!1,r.textContent="Đăng nhập"}}),(async()=>{if(!h)return;let t=null;try{t=sessionStorage.getItem(n)}catch(t){}if(t)try{await y(await crypto.subtle.importKey("raw",a(t),{name:"AES-GCM"},!1,["decrypt"]))}catch(t){try{sessionStorage.removeItem(n)}catch(t){}}})()})();
+/* Đăng nhập bảng điều khiển: sinh khóa từ mật khẩu (PBKDF2-SHA256), giải mã phần điều khiển (AES-256-GCM) rồi nạp vào trang. */
+(()=>{
+const P=window.__DTP,$=s=>document.getElementById(s),K='dt-parking-k';
+const b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+const tob64=u=>btoa(String.fromCharCode(...new Uint8Array(u)));
+const m=$('login'),pw=$('loginPw'),err=$('loginErr'),btn=$('loginBtn');
+let fails=0,lockUntil=0,opened=false;
+const ok=!!(P&&window.crypto&&crypto.subtle);
+async function derive(p){const base=await crypto.subtle.importKey('raw',new TextEncoder().encode(p),'PBKDF2',false,['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(P.s),iterations:P.it,hash:'SHA-256'},base,{name:'AES-GCM',length:256},true,['decrypt'])}
+async function unlock(key){
+  const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64(P.i)},key,b64(P.d));
+  const o=JSON.parse(new TextDecoder().decode(pt));
+  $('secCtrl').outerHTML=o.ctrl;$('plansSlot').outerHTML=o.plans;
+  for(const js of o.js){const sc=document.createElement('script');sc.textContent=js;document.body.appendChild(sc)}
+  opened=true;$('adminState').hidden=false;$('adminBtn').textContent='Đăng xuất';
+}
+function open(){if(opened)return;m.hidden=false;pw.value='';
+  err.textContent=ok?'':!P?'Không tải được gói điều khiển đã mã hóa (payload.js).':'Trình duyệt chặn chức năng giải mã. Hãy mở trang qua địa chỉ https.';
+  btn.disabled=!ok;setTimeout(()=>pw.focus(),0)}
+function close(){m.hidden=true;$('adminBtn').focus()}
+$('adminBtn').onclick=()=>{if(opened){try{sessionStorage.removeItem(K)}catch(e){}location.reload()}else open()};
+document.addEventListener('click',e=>{if(e.target.closest('[data-login]'))open()});
+$('loginCancel').onclick=close;
+m.addEventListener('click',e=>{if(e.target===m)close()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!m.hidden)close()});
+$('loginShow').onchange=e=>{pw.type=e.target.checked?'text':'password'};
+$('loginF').addEventListener('submit',async e=>{e.preventDefault();if(!ok)return;
+  if(Date.now()<lockUntil){err.textContent=`Nhập sai quá nhiều lần. Thử lại sau ${Math.ceil((lockUntil-Date.now())/1000)} giây.`;return}
+  btn.disabled=true;btn.textContent='Đang kiểm tra…';err.textContent='';
+  try{const key=await derive(pw.value);await unlock(key);try{sessionStorage.setItem(K,tob64(await crypto.subtle.exportKey('raw',key)))}catch(x){}close()}
+  catch(x){fails++;pw.select();
+    if(fails>=5){fails=0;lockUntil=Date.now()+30000;err.textContent='Sai mật khẩu 5 lần. Tạm khóa 30 giây.'}
+    else err.textContent=`Mật khẩu không đúng. Còn ${5-fails} lần thử trước khi bị khóa tạm.`}
+  btn.disabled=false;btn.textContent='Đăng nhập'});
+(async()=>{if(!ok)return;let raw=null;try{raw=sessionStorage.getItem(K)}catch(e){}
+  if(raw){try{await unlock(await crypto.subtle.importKey('raw',b64(raw),{name:'AES-GCM'},false,['decrypt']))}catch(e){try{sessionStorage.removeItem(K)}catch(x){}}}})();
+})();
