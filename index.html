@@ -8,49 +8,61 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Be+Vietnam+Pro:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
-/* Layout: bảng điều hành khu phố — dải kiến trúc 5 lớp, hai bản đồ song song (thực địa | bản sao số), hàng điều khiển–chỉ số–hồ sơ đoạn phố, biểu đồ + nhật ký */
+/* Layout: bảng điều hành khu phố — kiến trúc 5 lớp, hai bản đồ (thực địa | bản sao số), điều khiển–chỉ số–hồ sơ & tổ chức đoạn phố, phương án + so sánh, biểu đồ + nhật ký */
 :root{
   --bg:#eceff0; --panel:#fafbfb; --ink:#18211f; --muted:#5b6866; --line:#d3d9d8;
-  --asphalt:#454d51; --asphalt2:#353c40; --walk:#d6d9d3; --bldg:#c3c8c2; --bldg2:#b2b8b1; --park:#b9cfae; --mark:#f4f2ea; --yellow:#e2b93b;
+  --asphalt:#454d51; --asphalt2:#353c40; --walk:#d6d9d3; --bldg:#c3c8c2; --bldg2:#b2b8b1; --park:#b9cfae; --mark:#f4f2ea; --yellow:#d9a91f;
   --tbg:#f2f5f5; --tgrid:#e1e7e7;
-  --amber:#b87100; --teal:#0a7d84; --free:#2b9658; --occ:#c4473b; --res:#2d6acb; --unk:#8b908e; --viol:#9b3cb6; --mid:#d39a1c;
+  --amber:#b87100; --teal:#0a7d84; --free:#2b9658; --occ:#c4473b; --res:#2d6acb; --unk:#8b908e; --viol:#9b3cb6; --mid:#d39a1c; --scrim:rgba(18,26,28,.45);
   --f-disp:"Lexend",system-ui,sans-serif; --f-body:"Be Vietnam Pro",system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0e1416; --panel:#162024; --ink:#e3eae8; --muted:#93a29f; --line:#29363a;
-  --asphalt:#2c3438; --asphalt2:#22292c; --walk:#3a4341; --bldg:#2e3735; --bldg2:#263030; --park:#2f4430; --mark:#d9d6cc; --yellow:#c9a33a;
+  --asphalt:#2c3438; --asphalt2:#22292c; --walk:#3a4341; --bldg:#2e3735; --bldg2:#263030; --park:#2f4430; --mark:#d9d6cc; --yellow:#e0b43c;
   --tbg:#111a1d; --tgrid:#1c272a;
-  --amber:#f0a630; --teal:#3cc4c7; --free:#4dc37f; --occ:#ef6b5f; --res:#6da2f2; --unk:#7c8684; --viol:#cc82df; --mid:#e6b03c; color-scheme:dark}}
+  --amber:#f0a630; --teal:#3cc4c7; --free:#4dc37f; --occ:#ef6b5f; --res:#6da2f2; --unk:#7c8684; --viol:#cc82df; --mid:#e6b03c; --scrim:rgba(0,0,0,.6); color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0e1416; --panel:#162024; --ink:#e3eae8; --muted:#93a29f; --line:#29363a;
-  --asphalt:#2c3438; --asphalt2:#22292c; --walk:#3a4341; --bldg:#2e3735; --bldg2:#263030; --park:#2f4430; --mark:#d9d6cc; --yellow:#c9a33a;
+  --asphalt:#2c3438; --asphalt2:#22292c; --walk:#3a4341; --bldg:#2e3735; --bldg2:#263030; --park:#2f4430; --mark:#d9d6cc; --yellow:#e0b43c;
   --tbg:#111a1d; --tgrid:#1c272a;
-  --amber:#f0a630; --teal:#3cc4c7; --free:#4dc37f; --occ:#ef6b5f; --res:#6da2f2; --unk:#7c8684; --viol:#cc82df; --mid:#e6b03c; color-scheme:dark}
+  --amber:#f0a630; --teal:#3cc4c7; --free:#4dc37f; --occ:#ef6b5f; --res:#6da2f2; --unk:#7c8684; --viol:#cc82df; --mid:#e6b03c; --scrim:rgba(0,0,0,.6); color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.5}
 .wrap{max-width:1480px;margin:0 auto;padding-block:20px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:16px}
 h1,h2,h3{font-family:var(--f-disp);text-wrap:balance;margin:0;font-weight:600}
 h1{font-size:clamp(22px,3vw,30px);letter-spacing:-.01em}
 h2{font-size:15px}
-.lede{color:var(--muted);max-width:90ch;margin:6px 0 0}
+.lede{color:var(--muted);max-width:92ch;margin:6px 0 0}
 .eyebrow{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--teal)}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;min-width:0}
 .ph{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:10px}
 .ph small{color:var(--muted);font-size:12px}
 .mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+.hint{color:var(--muted);font-size:12px;margin:8px 0 0}
 
 .arch{display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}
-.node{padding:9px 12px;border:1px solid var(--line);background:var(--panel);position:relative;min-width:0}
+.node{font:inherit;color:inherit;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:2px;padding:9px 12px;border:1px solid var(--line);background:var(--panel);position:relative;min-width:0;transition:background .15s}
 .node:first-child{border-radius:10px 0 0 10px}.node:last-child{border-radius:0 10px 10px 0}
 .node+.node{border-left:none}
 .node .n{font-family:var(--f-mono);font-size:10.5px;color:var(--muted);letter-spacing:.06em}
-.node h3{font-size:13.5px;margin:1px 0 2px}
-.node p{margin:0;font-size:12px;color:var(--muted)}
-.node .live{margin-top:5px;font-family:var(--f-mono);font-size:11.5px}
-.node.tw{background:color-mix(in srgb,var(--teal) 9%,var(--panel))}
+.node .h{font-family:var(--f-disp);font-weight:600;font-size:13.5px}
+.node .p{font-size:12px;color:var(--muted)}
+.node .live{margin-top:3px;font-family:var(--f-mono);font-size:11.5px}
+.node .go{margin-top:4px;font-size:11.5px;color:var(--teal);font-weight:500}
+.node:hover,.node[aria-current=true]{background:color-mix(in srgb,var(--teal) 9%,var(--panel))}
+.node[aria-current=true]{box-shadow:inset 0 -2px 0 var(--teal)}
+.node:focus-visible{outline:2px solid var(--teal);outline-offset:-2px;z-index:3}
 .node:not(:last-child)::after{content:"";position:absolute;right:-5px;top:50%;width:9px;height:9px;border-top:1.5px solid var(--teal);border-right:1.5px solid var(--teal);transform:translateY(-50%) rotate(45deg);background:var(--panel);z-index:2}
+.flash{animation:flash 1.5s ease-out}
+@keyframes flash{0%,40%{box-shadow:0 0 0 3px var(--teal)}100%{box-shadow:0 0 0 0 transparent}}
+.status{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--muted);margin:-4px 0 10px;align-items:baseline}
+.status .simclock{font-size:16px;color:var(--ink)}
+.status b{color:var(--ink);font-weight:600}
+.lockedp{display:grid;gap:8px;align-content:start;border-style:dashed}
+.lockedp h2{font-size:16px}.lockedp .hint{margin:0}.lockedp .b{justify-self:start;margin-top:4px}
 .feedback{font-size:12px;color:var(--muted);margin-top:6px;display:flex;align-items:center;gap:8px}
-@media (max-width:820px){.arch{grid-template-columns:1fr 1fr;gap:6px}.node{border-radius:8px!important;border:1px solid var(--line)!important}.node::after{display:none}}
+@media (max-width:820px){.arch{grid-template-columns:1fr 1fr;gap:6px}.node:last-child{grid-column:1/-1}.node{border-radius:8px!important;border:1px solid var(--line)!important}.node::after{display:none}}
 
 .maps{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media (max-width:1100px){.maps{grid-template-columns:1fr}}
@@ -59,12 +71,15 @@ canvas{display:block;width:100%;cursor:pointer;border-radius:6px}
 .legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted);margin-top:8px;align-items:center}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
 .legend i.ring{background:transparent;border:2px solid}
+.legend i.dot{border-radius:50%}
+.legend i.line{height:3px;width:16px;border-radius:0;vertical-align:2px}
 .grad{display:inline-block;width:90px;height:8px;border-radius:4px;vertical-align:0;margin:0 4px}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}
 .seg button{font:inherit;font-size:12px;border:none;background:transparent;color:var(--muted);padding:4px 10px;cursor:pointer}
 .seg button[aria-pressed=true]{background:var(--ink);color:var(--panel)}
+.seg.day{display:flex}.seg.day button{flex:1;padding:6px 8px}
 
-.row3{display:grid;grid-template-columns:320px minmax(0,1fr) minmax(0,1.15fr);gap:16px;align-items:start}
+.row3{display:grid;grid-template-columns:320px minmax(0,1fr) minmax(0,1.25fr);gap:16px;align-items:start}
 @media (max-width:1250px){.row3{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.row3 .detailp{grid-column:1/-1}}
 @media (max-width:720px){.row3{grid-template-columns:1fr}}
 .ctrl{display:grid;gap:11px}
@@ -72,9 +87,10 @@ canvas{display:block;width:100%;cursor:pointer;border-radius:6px}
 button.b{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:7px 11px;border-radius:7px;cursor:pointer}
 button.b:hover{border-color:var(--muted)}
 button.b.pri{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+button.b:disabled{opacity:.55;cursor:default}
 button:focus-visible,select:focus-visible,input:focus-visible,canvas:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
 select{font:inherit;font-size:13px;padding:6px 8px;border-radius:7px;border:1px solid var(--line);background:var(--bg);color:var(--ink);width:100%}
-.field label{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:3px}
+.field label{display:flex;justify-content:space-between;gap:6px;font-size:12.5px;margin-bottom:3px}
 .field label output{font-family:var(--f-mono);color:var(--muted)}
 input[type=range]{width:100%;accent-color:var(--teal)}
 .tog{display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px}
@@ -83,13 +99,13 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 .tog input:checked{background:var(--teal)}.tog input:checked::after{left:16px}
 .tog small{display:block;color:var(--muted);font-size:11.5px}
 .clock{font-family:var(--f-mono);font-size:30px;font-weight:600;letter-spacing:-.02em;line-height:1}
-.clockrow{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.clockrow{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .sep{border-top:1px solid var(--line)}
 
 .kpis{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
-.kpi{background:var(--panel);padding:9px 10px;min-width:0}
+.kpi{background:var(--panel);padding:8px 10px;min-width:0}
 .kpi span{display:block;font-size:11.5px;color:var(--muted)}
-.kpi b{font-family:var(--f-mono);font-size:19px;font-weight:600;font-variant-numeric:tabular-nums}
+.kpi b{font-family:var(--f-mono);font-size:18px;font-weight:600;font-variant-numeric:tabular-nums}
 .kpi b small{font-size:11px;color:var(--muted);font-weight:400;margin-left:2px}
 .kpi.warn b{color:var(--occ)}
 .cmp{font-size:12.5px;display:grid;gap:6px}
@@ -109,13 +125,42 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 .chips{display:flex;gap:4px;flex-wrap:wrap}
 .chip{appearance:none;border:none;width:34px;height:22px;border-radius:4px;cursor:pointer;background:var(--free);font:600 9.5px var(--f-mono);color:#fff;padding:0;position:relative}
 .chip.occ{background:var(--occ)}.chip.res{background:var(--res)}.chip.unk{background:var(--unk)}.chip.viol{background:var(--viol)}
-.chip.np{background:transparent;outline:1.5px dashed var(--occ);outline-offset:-2px;color:var(--occ)}
-.chip.np.occ,.chip.np.viol{background:var(--viol);outline:none;color:#fff}
+.chip.chg{background:var(--teal)}.chip.done{background:var(--amber)}.chip.ldo{background:var(--yellow);color:#2a2410}
+.chip.ban{background:transparent;outline:1.5px dashed var(--occ);outline-offset:-2px;color:var(--occ)}
+.chip.ring{background:transparent;outline:2px solid var(--free);outline-offset:-2px;color:var(--free)}
+.chip.ldr{background:transparent;outline:2px solid var(--yellow);outline-offset:-2px;color:var(--yellow)}
+.chip.buf{background:repeating-linear-gradient(45deg,var(--line) 0 3px,transparent 3px 6px);outline:1px solid var(--line);outline-offset:-1px;color:var(--muted)}
+.chip.k-ev{border-radius:11px}
+.chip.k-load{clip-path:polygon(12% 0,88% 0,100% 50%,88% 100%,12% 100%,0 50%)}
 .chip.mis::after{content:"";position:absolute;top:2px;right:2px;width:5px;height:5px;border-radius:50%;background:var(--ink);box-shadow:0 0 0 1px #fff}
 .chip.sel{box-shadow:0 0 0 2px var(--panel),0 0 0 4px var(--ink)}
 .baybox{margin-top:10px;border-top:1px solid var(--line);padding-top:8px;font-size:12.5px}
 .baybox .dgrid{margin:6px 0 0}
-.muted{color:var(--muted)}
+#dform{margin-top:12px;border-top:1px solid var(--line);padding-top:12px}
+#dform:empty{display:none}
+#dform h3{font-size:14px;margin-bottom:8px}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px 16px;margin-bottom:10px}
+
+.plans{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:20px}
+@media (max-width:1000px){.plans{grid-template-columns:1fr}}
+.presets{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
+.preset{font:inherit;text-align:left;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;padding:9px 11px;cursor:pointer;display:grid;gap:2px}
+.preset b{font-family:var(--f-disp);font-weight:600;font-size:13px}
+.preset span{font-size:11.5px;color:var(--muted);line-height:1.4}
+.preset:hover{border-color:var(--muted)}
+.preset[aria-pressed=true]{border-color:var(--teal);box-shadow:inset 0 0 0 1px var(--teal);background:color-mix(in srgb,var(--teal) 8%,var(--bg))}
+.curplan{font-size:12.5px;margin-top:10px}
+.curplan b{font-family:var(--f-disp);font-weight:600}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:12.5px;min-width:760px}
+th,td{padding:7px 9px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-weight:600;color:var(--muted);font-size:11.5px;background:var(--bg)}
+th:first-child,td:first-child{text-align:left}
+td{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+td:first-child{font-family:var(--f-body);font-weight:500}
+td.best{color:var(--teal);font-weight:600}
+tr:last-child td{border-bottom:none}
+.empty td{color:var(--muted);text-align:center;font-family:var(--f-body)}
 
 .bottom{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:16px}
 @media (max-width:900px){.bottom{grid-template-columns:1fr}}
@@ -127,76 +172,93 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 .notes p{margin:0 0 8px;break-inside:avoid}
 .notes b{color:var(--ink);font-weight:600}
 footer{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px}
+.topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.topbar>div:first-child{min-width:0;flex:1 1 520px}
+.admin{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.admin .badge{font-family:var(--f-mono);font-size:11.5px;color:var(--teal);border:1px solid var(--teal);border-radius:999px;padding:3px 10px}
+.locked{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border:1px dashed var(--line);border-radius:8px;padding:12px}
+.locked h3{font-size:14px}.locked .hint{margin-top:2px}
+.lockNote{font-size:12px;color:var(--muted);margin:0 0 10px}
+.is-admin .lockNote{display:none}
+.preset:disabled{cursor:not-allowed;opacity:.65}
+.tog input:disabled,.tog input:disabled+span{opacity:.5;cursor:not-allowed}
+.modal{position:fixed;inset:0;z-index:50;background:var(--scrim);display:grid;place-items:center;padding:16px}
+.modal form{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:20px;width:min(380px,100%);display:grid;gap:12px;box-shadow:0 18px 50px rgba(0,0,0,.25)}
+.modal h2{font-size:18px}
+.modal input[type=password],.modal input[type=text]{font:inherit;font-size:15px;font-family:var(--f-mono);letter-spacing:.08em;padding:9px 11px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);width:100%}
+.modal .err{color:var(--occ);font-size:12.5px;min-height:1.2em;margin:0}
+.modal .show{display:flex;gap:6px;align-items:center;font-size:12.5px;color:var(--muted)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
 <div class="wrap">
-  <header>
+  <header class="topbar"><div>
     <div class="eyebrow">Digital Twin · On-street parking · Mạng lưới khu phố</div>
     <h1>Bản sao số quản lý đỗ xe trên đường</h1>
-    <p class="lede">Khu phố minh họa có 20 nút giao, hai trục chính cấm đỗ, 24 đoạn phố cho phép đỗ với khoảng 260 ô và 12 điểm thu hút như chợ, trường, bệnh viện, văn phòng, trung tâm thương mại. Xe vào từ 8 cửa ngõ, chạy theo mạng lưới tới điểm đến rồi tìm chỗ. Bản sao số theo dõi từng ô qua cảm biến và camera, dùng dữ liệu đó để điều hướng, định giá theo đoạn phố và xử lý vi phạm.</p>
+    <p class="lede">Khu phố minh họa có 20 nút giao, hai trục chính cấm đỗ, 24 đoạn phố cho phép đỗ với 264 ô, 12 điểm thu hút, ô có trụ sạc xe điện và ô bốc dỡ hàng. Bản sao số theo dõi từng ô qua cảm biến, camera và trụ sạc, dùng dữ liệu đó để điều hướng, định giá, xử lý vi phạm. Ai cũng xem được bản đồ, chỉ số và nhật ký. Người quản lý đăng nhập để điều khiển mô phỏng và áp dụng tổ chức đỗ xe (kể cả đỗ theo ngày chẵn lẻ, đỗ gián đoạn có ô đệm) cho từng đoạn phố hoặc toàn khu, rồi so sánh kết quả. Mọi phương tiện chỉ mang mã giả lập dạng MP‑0001, không dùng biển số thật.</p>
+    </div>
+    <div class="admin"><span class="badge" id="adminState" hidden>Đang điều khiển</span><button type="button" class="b" id="adminBtn">Đăng nhập điều khiển</button></div>
   </header>
 
   <section aria-label="Kiến trúc bản sao số">
-    <div class="arch">
-      <div class="node"><div class="n">LỚP 1</div><h3>Thực thể vật lý</h3><p>Mạng đường, ô đỗ, xe, tài xế</p><div class="live" id="a1">–</div></div>
-      <div class="node"><div class="n">LỚP 2</div><h3>Cảm biến & thu thập</h3><p>Cảm biến từ trường mỗi ô, camera LPR, GPS ứng dụng</p><div class="live" id="a2">–</div></div>
-      <div class="node"><div class="n">LỚP 3</div><h3>Truyền & đồng bộ</h3><p>NB‑IoT/LoRa, hàng đợi sự kiện, nhịp tín hiệu</p><div class="live" id="a3">–</div></div>
-      <div class="node tw"><div class="n">LỚP 4</div><h3>Bản sao số</h3><p>Trạng thái ô và đoạn phố, lịch sử, dự báo</p><div class="live" id="a4">–</div></div>
-      <div class="node"><div class="n">LỚP 5</div><h3>Phân tích & điều hành</h3><p>Điều hướng, giá theo đoạn, cưỡng chế, bảo trì</p><div class="live" id="a5">–</div></div>
-    </div>
-    <div class="feedback"><svg width="40" height="12" viewBox="0 0 40 12" aria-hidden="true"><path d="M38 6H4M9 1L3 6l6 5" fill="none" stroke="var(--teal)" stroke-width="1.5"/></svg>Vòng phản hồi: chỉ đường, bảng giá và lực lượng cưỡng chế ở lớp 5 làm thay đổi hành vi trên đường ở lớp 1.</div>
+    <nav class="arch" aria-label="Điều hướng theo 5 lớp của bản sao số">
+      <button type="button" class="node" data-go="secPhys"><span class="n">LỚP 1</span><span class="h">Thực thể vật lý</span><span class="p">Mạng đường, ô đỗ, trụ sạc, xe, tài xế</span><span class="live" id="a1">–</span><span class="go">Bản đồ thực địa ↓</span></button>
+      <button type="button" class="node" data-go="secDetail"><span class="n">LỚP 2</span><span class="h">Cảm biến & thu thập</span><span class="p">Cảm biến ô đỗ, camera, trụ sạc, GPS ứng dụng</span><span class="live" id="a2">–</span><span class="go">Cảm biến từng ô ↓</span></button>
+      <button type="button" class="node" data-go="secLog"><span class="n">LỚP 3</span><span class="h">Truyền & đồng bộ</span><span class="p">NB‑IoT/LoRa, giao thức trụ sạc, hàng đợi sự kiện</span><span class="live" id="a3">–</span><span class="go">Nhật ký sự kiện ↓</span></button>
+      <button type="button" class="node" data-go="secTwin"><span class="n">LỚP 4</span><span class="h">Bản sao số</span><span class="p">Trạng thái ô, phiên sạc, quy tắc đoạn phố, dự báo</span><span class="live" id="a4">–</span><span class="go">Bản đồ bản sao số ↓</span></button>
+      <button type="button" class="node" data-go="secCtrl"><span class="n">LỚP 5</span><span class="h">Phân tích & điều hành</span><span class="p">Tổ chức đỗ xe, điều hướng, giá, cưỡng chế, bảo trì</span><span class="live" id="a5">–</span><span class="go">Bảng điều khiển ↓</span></button>
+    </nav>
+    <div class="feedback"><svg width="40" height="12" viewBox="0 0 40 12" aria-hidden="true"><path d="M38 6H4M9 1L3 6l6 5" fill="none" stroke="var(--teal)" stroke-width="1.5"/></svg>Vòng phản hồi: biển báo, chỉ đường, bảng giá và lực lượng cưỡng chế ở lớp 5 làm thay đổi hành vi trên đường ở lớp 1.</div>
   </section>
 
   <div class="maps">
-    <section class="panel">
+    <section class="panel" id="secPhys">
       <div class="ph"><h2>Thực địa · lớp vật lý</h2><small>Bấm vào một đoạn phố để xem hồ sơ</small></div>
-      <canvas id="phys" tabindex="0" aria-label="Bản đồ khu phố với xe và ô đỗ"></canvas>
+      <canvas id="phys" tabindex="0" aria-label="Bản đồ khu phố với xe, ô đỗ và trụ sạc"></canvas>
       <div class="legend">
         <span><i class="ring" style="border-color:var(--amber)"></i>Tự tìm chỗ</span>
         <span><i class="ring" style="border-color:var(--teal)"></i>Được điều hướng</span>
-        <span><i class="ring" style="border-color:var(--muted)"></i>Đi qua / rời đi</span>
-        <span><i style="background:var(--occ)"></i>Cảm biến lỗi</span>
-        <span><i style="background:transparent;border:1.5px dashed var(--occ)"></i>Vùng cấm đỗ có camera</span>
+        <span><i class="dot" style="background:var(--free)"></i>Xe điện</span>
+        <span><i style="background:#eeeee8;border:1px solid var(--muted)"></i>Xe giao hàng</span>
+        <span><i style="background:color-mix(in srgb,var(--free) 35%,transparent);border:1.5px solid var(--free)"></i>Ô có trụ sạc</span>
+        <span><i style="background:transparent;border:1.5px solid var(--yellow)"></i>Ô bốc dỡ hàng</span>
+        <span><i style="background:repeating-linear-gradient(45deg,var(--muted) 0 1.5px,transparent 1.5px 4px);border:1px solid var(--muted)"></i>Ô đệm</span>
+        <span><i class="line" style="background:var(--occ)"></i>Lề đang cấm đỗ</span>
+        <span><i class="line" style="background:repeating-linear-gradient(90deg,var(--amber) 0 5px,transparent 5px 8px)"></i>Lề cấm theo giờ</span>
+        <span><i style="background:transparent;border:1.5px dashed var(--occ)"></i>Vùng cấm có camera</span>
       </div>
     </section>
-    <section class="panel">
+    <section class="panel" id="secTwin">
       <div class="ph"><h2>Bản sao số · lớp dữ liệu</h2>
-        <div class="seg" role="group" aria-label="Tô màu đoạn phố theo"><button type="button" id="mOcc" aria-pressed="true">Chiếm dụng</button><button type="button" id="mPrice" aria-pressed="false">Giá</button></div></div>
-      <canvas id="twin" tabindex="0" aria-label="Bản đồ bản sao số với mức chiếm dụng từng đoạn phố"></canvas>
+        <div class="seg" role="group" aria-label="Tô màu đoạn phố theo"><button type="button" id="mOcc" aria-pressed="true">Chiếm dụng</button><button type="button" id="mPrice" aria-pressed="false">Giá</button><button type="button" id="mRule" aria-pressed="false">Quy tắc</button></div></div>
+      <canvas id="twin" tabindex="0" aria-label="Bản đồ bản sao số với mức chiếm dụng, giá hoặc quy tắc từng đoạn phố"></canvas>
       <div class="legend" id="tlegend"></div>
     </section>
   </div>
 
   <div class="row3">
-    <section class="panel ctrl">
-      <div class="clockrow">
-        <div><div class="eyebrow" style="color:var(--muted)">Giờ mô phỏng</div><div class="clock" id="clock">06:30</div></div>
-        <div class="btns"><button class="b pri" id="play">Tạm dừng</button><button class="b" id="reset">Chạy lại</button></div>
-      </div>
-      <div class="field"><label for="speed">Tốc độ mô phỏng</label>
-        <select id="speed"><option value="15">15× (1 giây = 15 giây)</option><option value="30" selected>30× (1 giây = 30 giây)</option><option value="60">60× (1 giây = 1 phút)</option><option value="120">120× (1 giây = 2 phút)</option></select></div>
-      <div class="field"><label for="demand">Nhu cầu đỗ xe <output id="demandO">100%</output></label><input type="range" id="demand" min="50" max="170" value="100" step="5"></div>
-      <div class="sep"></div>
-      <label class="tog"><input type="checkbox" id="guide" checked><span>Điều hướng chỗ trống<small>Giữ ô trống theo bản sao số, cân nhắc quãng đi bộ, giá và quãng chạy xe</small></span></label>
-      <div class="field"><label for="adopt">Tài xế dùng ứng dụng <output id="adoptO">50%</output></label><input type="range" id="adopt" min="0" max="100" value="50" step="5"></div>
-      <label class="tog"><input type="checkbox" id="dyn"><span>Giá động theo đoạn phố<small>Mỗi 15 phút: chiếm dụng &gt; 90% tăng 5k/h, &lt; 60% giảm 5k/h (10–60k)</small></span></label>
-      <label class="tog"><input type="checkbox" id="enf" checked><span>Cưỡng chế tự động<small>Cẩu kéo xe đỗ vùng cấm, lập biên bản quá giờ</small></span></label>
-      <div class="sep"></div>
-      <div class="btns"><button class="b" id="fault">Gây lỗi 8 cảm biến</button><button class="b" id="spike">Sự kiện ở TTTM 60 phút</button></div>
+    <section class="panel lockedp" id="secCtrl">
+      <div class="eyebrow">Bảng điều khiển</div>
+      <h2>Điều khiển và tổ chức đỗ xe</h2>
+      <p class="hint">Bạn đang ở chế độ xem: mô phỏng tự chạy với cài đặt hiện hành, bản đồ, chỉ số và nhật ký cập nhật liên tục.</p>
+      <p class="hint">Đăng nhập để chạy, dừng, chỉnh nhu cầu, áp dụng tổ chức đỗ xe từng đoạn phố, phương án toàn khu, giá động, cưỡng chế và kịch bản sự cố.</p>
+      <button type="button" class="b pri" data-login>Đăng nhập điều khiển</button>
     </section>
 
     <section class="panel">
       <div class="ph"><h2>Chỉ số toàn khu</h2><small>Đọc từ bản sao số</small></div>
+      <div class="status"><b class="simclock mono">06:30</b><span id="sDay">–</span><span id="sRun">–</span><span>Phương án: <b id="sPlan">–</b></span></div>
       <div class="kpis">
-        <div class="kpi"><span>Chiếm dụng</span><b id="k1">–</b></div>
+        <div class="kpi"><span>Chiếm dụng ô thường</span><b id="k1">–</b></div>
         <div class="kpi"><span>Xe đang tìm chỗ</span><b id="k2">–</b></div>
         <div class="kpi"><span>Quãng chạy thêm để tìm chỗ</span><b id="k3">–</b></div>
         <div class="kpi"><span>CO₂ phát thải thêm</span><b id="k4">–</b></div>
-        <div class="kpi"><span>Doanh thu hôm nay</span><b id="k5">–</b></div>
-        <div class="kpi"><span>Lượt đỗ</span><b id="k6">–</b></div>
+        <div class="kpi"><span>Trụ sạc đang dùng</span><b id="k9">–</b></div>
+        <div class="kpi"><span>Điện đã sạc</span><b id="k10">–</b></div>
+        <div class="kpi"><span>Thu phí đỗ + sạc</span><b id="k5">–</b></div>
+        <div class="kpi"><span>Lượt đỗ · lượt giao hàng</span><b id="k6">–</b></div>
         <div class="kpi" id="k7w"><span>Vi phạm phát hiện / xử lý</span><b id="k7">–</b></div>
         <div class="kpi"><span>Sai lệch thực – số</span><b id="k8">–</b></div>
       </div>
@@ -211,20 +273,26 @@ footer{font-size:12px;color:var(--muted);display:flex;justify-content:space-betw
       </div>
     </section>
 
-    <section class="panel detailp" id="detail" aria-live="polite"></section>
+    <section class="panel detailp" id="secDetail">
+      <div id="dinfo" aria-live="polite"></div>
+      <div id="dform"><p class="hint">Đăng nhập điều khiển để thay đổi tổ chức đỗ xe trên đoạn phố này. <button type="button" class="b" data-login style="padding:3px 9px;font-size:12px">Đăng nhập</button></p></div>
+    </section>
   </div>
+
+  <div id="plansSlot" hidden></div>
 
   <div class="bottom">
     <section class="panel">
-      <div class="ph"><h2>Chiếm dụng toàn khu và xe đang tìm chỗ</h2><small>Lấy mẫu 5 phút · nét đứt: dự báo 30 phút</small></div>
-      <canvas id="chart" aria-label="Biểu đồ chiếm dụng toàn khu và số xe đang tìm chỗ theo giờ"></canvas>
+      <div class="ph"><h2>Chiếm dụng, xe tìm chỗ và trụ sạc</h2><small>Lấy mẫu 5 phút · nét đứt: dự báo 30 phút</small></div>
+      <canvas id="chart" aria-label="Biểu đồ chiếm dụng toàn khu, tỷ lệ dùng trụ sạc và số xe đang tìm chỗ theo giờ"></canvas>
       <div class="legend">
-        <span><i style="background:var(--teal);height:3px;border-radius:0"></i>Chiếm dụng (trục trái)</span>
+        <span><i class="line" style="background:var(--teal)"></i>Chiếm dụng ô thường (trục trái)</span>
+        <span><i class="line" style="background:var(--free)"></i>Tỷ lệ dùng trụ sạc (trục trái)</span>
         <span><i style="background:var(--amber);opacity:.55"></i>Xe đang tìm chỗ (trục phải)</span>
-        <span><i style="background:transparent;border-top:2px dashed var(--muted);border-radius:0;height:0;width:16px"></i>Mục tiêu 85%</span>
+        <span><i style="background:var(--line)"></i>Giờ cao điểm</span>
       </div>
     </section>
-    <section class="panel">
+    <section class="panel" id="secLog">
       <div class="ph"><h2>Nhật ký sự kiện</h2><small id="logc"></small></div>
       <ul id="log"></ul>
     </section>
@@ -233,19 +301,34 @@ footer{font-size:12px;color:var(--muted);display:flex;justify-content:space-betw
   <section class="panel">
     <div class="ph"><h2>Cách đọc mô hình</h2></div>
     <div class="notes">
-      <p><b>Mạng lưới.</b> Lưới 5 × 4 nút, khối nhà khoảng 220 × 190 m. Đại lộ Sông Hồng và Đường Vành Đai là trục chính hai chiều, cấm đỗ. Các phố còn lại hai chiều, đỗ song song cả hai bên lề. Xe chỉ đỗ được ở lề bên phải theo chiều chạy.</p>
-      <p><b>Nhu cầu theo điểm thu hút.</b> Mỗi loại điểm có biểu đồ đến theo giờ và thời gian đỗ riêng: trường học đón trả 7:00 và 16:45 (khoảng 12 phút), chợ sáng và chiều (30 phút), văn phòng 8:15 (gần 2 giờ), bệnh viện cả ngày, ẩm thực và TTTM buổi tối.</p>
-      <p><b>Tự tìm chỗ.</b> Tài xế chạy tới góc gần nhất của khối nhà đích rồi vòng quanh khối theo chiều kim đồng hồ để ô đỗ luôn ở phía khối nhà. Sau mỗi vòng không có chỗ, họ chấp nhận đi bộ xa thêm 160 m và chuyển sang vòng một khối kế bên. Sau 4 vòng thì bỏ cuộc.</p>
-      <p><b>Điều hướng.</b> Bản sao số chọn ô trống có chi phí nhỏ nhất, gồm quãng đi bộ, giá và quãng chạy xe, rồi giữ chỗ và dẫn đường. Nếu ô bị xe tự tìm chiếm trước, hệ thống chọn lại ô khác. Bản sao số chỉ biết vị trí của xe dùng ứng dụng.</p>
-      <p><b>Đồng bộ.</b> Sự kiện cảm biến đến bản sao sau 5–25 giây. Cảm biến hỏng không gửi gì; sau 5 phút mất nhịp tín hiệu, ô chuyển sang "mất tín hiệu" và có lệnh bảo trì. Chấm đen trên ô cho biết bản sao đang sai so với thực tế.</p>
-      <p><b>Quy đổi.</b> 1 px bằng 1 m. Thời gian tìm chỗ là phần quãng chạy vượt so với đường ngắn nhất từ cửa ngõ tới khối nhà đích, quy đổi ở 18 km/h. CO₂ khoảng 0,18 kg/km. Giá cơ sở 30 nghìn đ/h ở đoạn phố thương mại, 20 nghìn đ/h ở nơi khác. Giới hạn 4 giờ cạnh văn phòng, chung cư, bệnh viện, các nơi khác 3 giờ.</p>
+      <p><b>Mã xe giả lập.</b> Mỗi phương tiện có mã MP‑0001, MP‑0002… do mô hình tạo ra để theo dõi, không phải biển số và không gắn với người thật. Trong hệ thống thực, camera nhận dạng biển số sẽ được thay bằng mã ẩn danh tương tự trước khi đưa vào bản sao số.</p>
+      <p><b>Mạng lưới.</b> Lưới 5 × 4 nút, khối nhà khoảng 220 × 190 m. Đại lộ Sông Hồng và Đường Vành Đai là trục chính cấm đỗ. Phố nội khu hai chiều, đỗ song song hai bên lề, xe chỉ đỗ được ở lề bên phải theo chiều chạy.</p>
+      <p><b>Tổ chức đỗ xe.</b> Mỗi đoạn phố có một bộ quy tắc: chế độ đỗ (hai bên, một bên, cấm giờ cao điểm 7:00–9:00 và 16:30–19:00, cấm cả ngày), giá cơ sở, giới hạn thời gian, số ô có trụ sạc, số ô bốc dỡ hàng. Khi lệnh cấm bắt đầu, khoảng 65% xe đang đỗ tự rời đi trong 10 phút; xe còn lại sau 5 phút bị ghi nhận vi phạm.</p>
+      <p><b>Đỗ theo ngày chẵn lẻ.</b> Ngày chẵn chỉ được đỗ một lề, ngày lẻ đỗ lề còn lại, nên mỗi ngày đoạn phố chỉ có một nửa số ô. Ô có trụ sạc và ô bốc dỡ được cắm biển riêng nên không áp dụng. Bấm chuyển ngày giữa chừng để xem xe ở lề vừa bị cấm phải rời đi hoặc bị xử lý sau 5 phút.</p>
+      <p><b>Đỗ gián đoạn.</b> Ô đỗ chia thành từng nhóm liên tiếp (1–4 ô), xen giữa là 1–2 ô đệm kẻ vạch chéo, không được đỗ. Ô đệm dành cho người đi bộ sang đường, lối ra vào nhà và chỗ cho xe tránh nhau. Mẫu "2 ô + 1 đệm" giữ lại khoảng 2/3 số ô của đoạn phố.</p>
+      <p><b>Xe điện và trụ sạc.</b> Trụ AC 22 kW, pin 60 kWh, sạc tới 90%. Xe điện có mức pin dưới 50% thì phần lớn cần sạc và ưu tiên tìm ô có trụ. Khoảng 55% chủ xe để xe lại sau khi sạc đầy; quá 15 phút thì bị tính phí chiếm trụ 10 nghìn đ/15 phút. Giá điện 3,9 nghìn đ/kWh, ô có trụ không thu phí đỗ khi đang sạc.</p>
+      <p><b>Ô bốc dỡ hàng</b> chỉ dành cho xe giao hàng, tối đa 30 phút. Xe giao hàng đến chợ, cửa hàng, nhà hàng, TTTM nhiều nhất vào 7:00–10:00 và đầu giờ chiều. Không có ô bốc dỡ, một phần xe giao hàng sẽ đỗ sai chỗ.</p>
+      <p><b>Tự tìm chỗ.</b> Tài xế chạy tới góc khối nhà đích rồi vòng quanh khối. Sau mỗi vòng không có chỗ, họ chấp nhận đi bộ xa thêm 160 m và chuyển sang khối kế bên. Sau 4 vòng thì bỏ cuộc. Khoảng 3% tài xế sẵn sàng đỗ sai nếu không tìm được chỗ.</p>
+      <p><b>Điều hướng.</b> Bản sao số chọn ô có chi phí nhỏ nhất (đi bộ, giá, quãng chạy), ưu tiên ô có trụ cho xe điện cần sạc, ô bốc dỡ cho xe giao hàng, và tránh đoạn sắp vào giờ cấm. Nếu ô bị chiếm trước hoặc trụ sạc hỏng, hệ thống chọn lại.</p>
+      <p><b>Quy đổi.</b> 1 px bằng 1 m. Thời gian tìm chỗ là phần quãng chạy vượt so với đường ngắn nhất, quy đổi ở 18 km/h. CO₂ khoảng 0,18 kg/km. Sự kiện cảm biến đến bản sao sau 5–25 giây, sự kiện trụ sạc sau 2 giây.</p>
     </div>
   </section>
 
-  <footer><span>Tài liệu minh họa · TS. Đặng Minh Tân — Bộ môn Đường bộ – Sân bay, Khoa Công trình và Môi trường, Trường ĐH Giao thông Vận tải</span><span>Khu phố và số liệu là giả định, không phải dữ liệu đo thực tế</span></footer>
+  <footer><span>Tài liệu minh họa · TS. Đặng Minh Tân — Bộ môn Đường bộ – Sân bay, Khoa Công trình và Môi trường, Trường ĐH Giao thông Vận tải</span><span>Khu phố, phương tiện và số liệu là giả định, không phải dữ liệu đo thực tế</span></footer>
 </div>
-
+<div class="modal" id="login" hidden role="dialog" aria-modal="true" aria-labelledby="loginT">
+  <form id="loginF" autocomplete="off">
+    <div><div class="eyebrow">Bảng điều khiển</div><h2 id="loginT">Đăng nhập điều khiển</h2></div>
+    <p class="hint" style="margin:0">Phần điều khiển được mã hóa, chỉ mở được bằng mật khẩu. Bản đồ và thống kê vẫn xem tự do.</p>
+    <div class="field"><label for="loginPw">Mật khẩu</label><input type="password" id="loginPw" autocomplete="current-password" required></div>
+    <label class="show"><input type="checkbox" id="loginShow">Hiện mật khẩu</label>
+    <p class="err" id="loginErr" aria-live="polite"></p>
+    <div class="btns" style="justify-content:flex-end"><button type="button" class="b" id="loginCancel">Hủy</button><button type="submit" class="b pri" id="loginBtn">Đăng nhập</button></div>
+  </form>
+</div>
 <script src="core.js"></script>
-<script src="app.js"></script>
+<script src="view.js"></script>
+<script src="payload.js"></script>
+<script src="gate.js"></script>
 </body>
 </html>
